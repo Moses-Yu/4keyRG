@@ -13,6 +13,8 @@ public class Notes : MonoBehaviour
     private ArrayList notePositionL;
     private float sectorSize = 0.14165f;
     public float skipTo = 65f;
+    public GameObject longNotePos;
+    
     private ArrayList song1 = new ArrayList()
     {
         new ArrayList() { 71.26, 2, 'l', 2 },
@@ -89,17 +91,28 @@ public class Notes : MonoBehaviour
             }
             else if ((char)note[2] == 'l')
             {
-                Vector2 temp = new Vector2(xPos, speed * time * 60);
-                notePositionL.Add(temp);
+                Vector3 temp = new Vector3(xPos, speed * time * 60, 0);
+                // notePositionL.Add(temp);
+                GameObject startPos =  Instantiate(longNotePos, temp, Quaternion.identity, transform);
 
-                temp = new Vector2(xPos, speed * (time + sectorSize * (int)note[3]) * 60);
-                notePositionL.Add(temp);
+                temp = new Vector3(xPos, speed * (time + sectorSize * (int)note[3]) * 60, 0);
+                // notePositionL.Add(temp);
 
-                for (float i = 0; i <= (int)note[3]; i += 0.2f)
-                {
-                    temp = new Vector2(xPos, speed * (time + sectorSize * i) * 60);
-                    notePositionL.Add(temp);
-                }
+                GameObject endPos = Instantiate(longNotePos, temp, Quaternion.identity, transform);
+                
+                Transform[] pos = {startPos.transform, endPos.transform};
+                
+                GameObject longN = Instantiate(longNote, transform);
+
+                longN.GetComponent<longNote>().SetUpLine(startPos.transform, endPos.transform);
+                
+
+
+                // for (float i = 0; i <= (int)note[3]; i += 0.2f)
+                // {
+                //     temp = new Vector2(xPos, speed * (time + sectorSize * i) * 60);
+                //     notePositionL.Add(temp);
+                // }
             }
         }
 
@@ -109,10 +122,10 @@ public class Notes : MonoBehaviour
         {
             Instantiate(shortNote, position, Quaternion.Euler(0, 0, 0), transform);
         }
-        foreach (Vector2 position in notePositionL)
-        {
-            Instantiate(longNote, position, Quaternion.Euler(0, 0, 0), transform);
-        }
+        // foreach (Vector2 position in notePositionL)
+        // {
+        //     Instantiate(longNote, position, Quaternion.Euler(0, 0, 0), transform);
+        // }
 
         transform.position = new Vector2(0, -speed * 60 + -speed * 60 * skipTo);
     }
